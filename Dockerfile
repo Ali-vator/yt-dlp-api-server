@@ -10,7 +10,5 @@ COPY . /app
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-# ❌ لا تكتب ENV PORT=8080
-
-# ✅ استخدم صيغة shell داخل exec لتفسير $PORT
+# متكتبش ENV PORT
 CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port=$PORT"]
