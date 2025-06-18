@@ -10,7 +10,7 @@ COPY . /app
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-# ❌ لا تكتب ENV PORT=8080 هنا
+# ❌ لا تكتب ENV PORT=8080
 
-# ✅ Railway هيحط $PORT في وقت التشغيل
-CMD uvicorn main:app --host 0.0.0.0 --port $PORT
+# ✅ استخدم صيغة shell داخل exec لتفسير $PORT
+CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port=$PORT"]
