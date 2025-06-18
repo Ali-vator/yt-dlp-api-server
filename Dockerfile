@@ -10,5 +10,6 @@ COPY . /app
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-# متكتبش ENV PORT
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port=$PORT"]
+# ❌ لا تستخدم ENV PORT
+# ✅ استخدم shell mode مباشرة لتفسير $PORT
+CMD sh -c 'uvicorn main:app --host 0.0.0.0 --port=$PORT'
