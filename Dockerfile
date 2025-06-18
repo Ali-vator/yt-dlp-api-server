@@ -1,19 +1,16 @@
 FROM python:3.11-slim
 
-# تثبيت ffmpeg وأساسيات النظام
 RUN apt-get update && \
     apt-get install -y ffmpeg curl && \
     apt-get clean
 
-# تحديد مجلد العمل
 WORKDIR /app
-
-# نسخ ملفات المشروع
 COPY . /app
 
-# تثبيت مكتبات البايثون
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-# ✅ هذا السطر بيشتغل محليًا وعلى Railway
+# ❌ لا تكتب ENV PORT=8080 هنا
+
+# ✅ Railway هيحط $PORT في وقت التشغيل
 CMD uvicorn main:app --host 0.0.0.0 --port $PORT
