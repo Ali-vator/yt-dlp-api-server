@@ -10,5 +10,8 @@ COPY . /app
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-ENTRYPOINT ["sh", "-c"]
-CMD ["uvicorn main:app --host 0.0.0.0 --port=$PORT"]
+# خلي السكريبت قابل للتنفيذ
+RUN chmod +x /app/start.sh
+
+# استخدم السكريبت كأمر تشغيل
+CMD ["/app/start.sh"]
