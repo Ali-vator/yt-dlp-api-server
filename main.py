@@ -41,7 +41,7 @@ async def download_video(
             'format': get_format_option(quality),
             'outtmpl': os.path.join(session_path, '%(title)s.%(ext)s'),
             'quiet': True,
-            'cookiefile': 'cookies.txt'
+            'cookiefile': 'cookies.txt'  # تأكد أن الملف موجود
         }
 
         with YoutubeDL(ydl_opts) as ydl:
@@ -61,11 +61,16 @@ async def download_video(
             safe_path = os.path.join(session_path, safe_filename)
             os.rename(original_path, safe_path)
 
-            return FileResponse(safe_path, media_type="application/octet-stream", filename=safe_filename)
+            return FileResponse(
+                safe_path,
+                media_type="application/octet-stream",
+                filename=safe_filename
+            )
 
         else:
             zip_name = f"{session_id}.zip"
             zip_path = os.path.join(BASE_DOWNLOAD_FOLDER, zip_name)
+
             with zipfile.ZipFile(zip_path, 'w') as zipf:
                 for file_name in files_downloaded:
                     safe_name = sanitize_filename(file_name)
