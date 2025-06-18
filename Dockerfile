@@ -15,8 +15,5 @@ COPY . /app
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-# Railway بيوفر PORT تلقائيًا في البيئة
-ENV PORT=8080
-
 # ✅ هذا السطر بيشتغل محليًا وعلى Railway
 CMD uvicorn main:app --host 0.0.0.0 --port $PORT
