@@ -19,10 +19,6 @@ def get_format_option(quality: str) -> str:
         return f"bestvideo[height<={quality[:-1]}]+bestaudio/best[height<={quality[:-1]}]"
     return "best"
 
-def sanitize_filename(filename: str) -> str:
-    # إزالة أي رموز غير مقبولة في اسم الملف
-    return re.sub(r'[^a-zA-Z0-9_\-.]', '_', filename)
-
 @app.get("/")
 async def root():
     return {"status": "API is up and running!"}
@@ -41,7 +37,7 @@ async def download_video(
             'format': get_format_option(quality),
             'outtmpl': os.path.join(session_path, '%(title)s.%(ext)s'),
             'quiet': True,
-            'cookiefile': 'cookies.txt'  # تأكد أن الملف موجود
+            'cookiefile': 'cookies.txt'
         }
 
         with YoutubeDL(ydl_opts) as ydl:
@@ -56,8 +52,17 @@ async def download_video(
             original_file = files_downloaded[0]
             original_path = os.path.join(session_path, original_file)
 
-            # إعادة تسمية الملف لاسم آمن
-            safe_filename = sanitize_filename(original_file)
+            # استخراج الامتداد الأصلي
+            ext = os.path.splitext(original_file)[1] or ".mp4"
+
+            # تحديد اسم الملف النهائي الثابت
+            if quality == "audio":
+                safe_filename = "audio.mp3"
+            elif quality != "best":
+                safe_filename = f"video_{quality}.mp4"
+            else:
+                safe_filename = "video.mp4"
+
             safe_path = os.path.join(session_path, safe_filename)
             os.rename(original_path, safe_path)
 
@@ -73,11 +78,8 @@ async def download_video(
 
             with zipfile.ZipFile(zip_path, 'w') as zipf:
                 for file_name in files_downloaded:
-                    safe_name = sanitize_filename(file_name)
                     original_file = os.path.join(session_path, file_name)
-                    safe_file = os.path.join(session_path, safe_name)
-                    os.rename(original_file, safe_file)
-                    zipf.write(safe_file, arcname=safe_name)
+                    zipf.write(original_file, arcname=file_name)
 
             shutil.rmtree(session_path)
             return FileResponse(zip_path, media_type="application/zip", filename=zip_name)
